@@ -35,6 +35,9 @@ jobs:
         export PATH=$PWD/here/bin:$PATH
         luarocks make --force LUA_INCDIR=$PWD/here/include
     - name: Test
+      shell: bash
+      env:
+        SHELL: /bin/bash
       run: |
         export PATH=$PWD/here/bin:$PATH
         specl -vfreport --coverage spec/*_spec.yaml
