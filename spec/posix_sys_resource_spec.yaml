@@ -73,10 +73,3 @@ specify posix.sys.resource:
             },
          }
       }
-  - it accepts PosixRlimit argument:
-      for _, rc in pairs {"RLIMIT_CORE", "RLIMIT_CPU", "RLIMIT_DATA", "RLIMIT_FSIZE",
-          "RLIMIT_NOFILE", "RLIMIT_STACK", "RLIMIT_AS"}
-      do
-         rlim = getrlimit(M[rc])
-         expect(setrlimit(M[rc], rlim)).to_be(0)
-      end
