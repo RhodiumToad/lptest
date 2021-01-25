@@ -32,11 +32,11 @@ jobs:
         luarocks install luacov
     - name: build
       env:
-        PATH: PATH=$PWD/here/bin:$PATH
+        PATH: $PWD/here/bin:$PATH
       run: |
         luarocks make --force LUA_INCDIR=$PWD/here/include
     - name: Test
       env:
-        PATH: PATH=$PWD/here/bin:$PATH
+        PATH: $PWD/here/bin:$PATH
       run: |
         specl -vfreport --coverage spec/*_spec.yaml
