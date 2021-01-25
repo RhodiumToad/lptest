@@ -1,4 +1,3 @@
-
 name: Lua module test
 
 on:
@@ -9,22 +8,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        lua: [5.1, 5.2, 5.3, 5.4]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-    - name: Install dependencies
+    - name: Install system dependencies
+      env:
+        lua_ver: ${{ matrix.lua }}
       run: |
         sudo apt-get install libyaml-dev
         python -m pip install --upgrade pip
         pip install git+https://github.com/luarocks/hererocks
-        hererocks here -r^ --lua=5.3 --patch
-        export PATH=$PWD/here/bin:$PATH
+        hererocks here -r^ --lua=$lua_ver --patch
+        echo "$PWD/here/bin" >>$GITHUB_PATH
+    - name: Install rocks
+      run: |
         luarocks install ldoc
         luarocks install ansicolors
         luarocks install specl
@@ -32,12 +36,10 @@ jobs:
         luarocks install luacov
     - name: build
       run: |
-        export PATH=$PWD/here/bin:$PATH
         luarocks make --force LUA_INCDIR=$PWD/here/include
     - name: Test
       shell: bash
       env:
         SHELL: /bin/bash
       run: |
-        export PATH=$PWD/here/bin:$PATH
         specl -vfreport --coverage spec/*_spec.yaml
