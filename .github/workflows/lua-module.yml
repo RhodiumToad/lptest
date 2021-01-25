@@ -31,12 +31,10 @@ jobs:
         luarocks install typecheck
         luarocks install luacov
     - name: build
-      env:
-        PATH: $PWD/here/bin:$PATH
       run: |
+        export PATH=$PWD/here/bin:$PATH
         luarocks make --force LUA_INCDIR=$PWD/here/include
     - name: Test
-      env:
-        PATH: $PWD/here/bin:$PATH
       run: |
+        export PATH=$PWD/here/bin:$PATH
         specl -vfreport --coverage spec/*_spec.yaml
