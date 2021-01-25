@@ -1,0 +1,37 @@
+
+name: Lua module test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install git+https://github.com/luarocks/hererocks
+        hererocks here -r^ --lua=5.3 --patch
+        export PATH=$PWD/here/bin:$PATH
+        luarocks install ldoc
+        luarocks install ansicolors
+        luarocks install specl
+        luarocks install typecheck
+        luarocks install luacov
+    - name: build
+      run: |
+        luarocks make --force LUA_INCDIR=$PWD/here/include
+    - name: Test
+      run: |
+        specl -vfreport --coverage spec/*_spec.yaml
