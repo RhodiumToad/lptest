@@ -15,7 +15,7 @@ env:
 before_install:
   - pip install git+https://github.com/luarocks/hererocks
   - hererocks here -r^ --$VLUA --patch
-  - export PATH=$PWD/here/bin:$PATH
+  - export PATH=$PWD/here/bin:$PATH lpath=$PWD/here/share/lua/${VLUA#lua=} lcpath=$PWD/here/lib/lua/${VLUA#lua=}
 
 
 install:
@@ -27,6 +27,8 @@ install:
 
 script:
   - luarocks make --force LUA_INCDIR=$PWD/here/include
+  - LUA_PATH="$lpath/?.lua;$lpath/?/init.lua" LUA_CPATH="$lcpath/?.so" lua -e 'for k,v in pairs(require"posix") do print(k,v) end'
+  - LUA_PATH="$lpath/?.lua;$lpath/?/init.lua" LUA_CPATH="$lcpath/?.so" lua -e 'for k,v in pairs(require"posix._base") do print(k,v) end'
   - specl -vfreport --coverage spec/*_spec.yaml
 
 after_success:
